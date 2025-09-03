@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmTrials - Registration Portal</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+            flex-direction: column;
+            background: linear-gradient(135deg, #108f386d, #0972209c);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .main {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 20px 30px;
+            backdrop-filter: blur(4.8px);
+            -webkit-backdrop-filter: blur(4.8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            width: 500px;
+            max-width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: green;
+            margin-bottom: 10px;
+        }
+
+        .account-type {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .account-type-btn {
+            padding: 10px 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            background: white;
+            color: #4CAF50;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .account-type-btn.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-align: left;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input, select {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        button {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            background-color: #4CAF50;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .button-container {
+            display: flex; 
+            gap: 10px; 
+            justify-content: center; 
+        }
+
+        .button-container button {
+            width: auto;
+            padding: 10px 15px;
+        }
+
+        .wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .otp-container {
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 15px;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 40px; 
+            text-align: center;
+            font-size: 1.5rem; 
+            border: 2px solid #ccc; 
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+
+        .otp-input:focus {
+            outline: none; 
+            border-color: #007bff;
+        }
+
+        .terms {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .terms input {
+            width: auto;
+            margin: 0 10px 0 0;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            text-align: left;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .success {
+            color: green;
+            font-size: 0.9rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .password-strength {
+            text-align: left;
+            font-size: 0.9rem;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .weak { color: red; }
+        .medium { color: orange; }
+        .strong { color: green; }
+
+        @media (max-width: 600px) {
+            .main {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .account-type {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .otp-input {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body> 
+    <div class="main">
+        <h1>FarmTrials</h1>
+        <p>Create your account to get started</p>
+        
+        <div class="account-type">
+            <button class="account-type-btn active" id="consumer-btn">Consumer Account</button>
+            <button class="account-type-btn" id="farmer-btn">Farmer Account</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress-bar"></div>
+        </div>
+
+        <!-- Consumer Form -->
+        <form id="consumer-form" class="form-section active">
+            <h3>Consumer Registration</h3>
+            
+            <label for="consumer-username">Username:</label>
+            <input type="text" id="consumer-username" name="username" placeholder="Enter your username" required>
+            <div class="error" id="consumer-username-error">Username must be at least 3 characters</div>
+
+            <label for="consumer-email">Email address:</label>
+            <input type="email" id="consumer-email" name="email" placeholder="Enter your email" required>
+            <div class="error" id="consumer-email-error">Please enter a valid email address</div>
+
+            <label for="consumer-profile">Profile picture:</label>
+            <input type="file" id="consumer-profile" name="profile" accept="image/*">
+
+            <label for="consumer-mobile">Mobile number:</label>
+            <input type="tel" id="consumer-mobile" name="mobile" placeholder="Enter your mobile number" required pattern="[0-9]{10}">
+            <div class="error" id="consumer-mobile-error">Please enter a valid 10-digit mobile number</div>
+
+            <label for="consumer-password">Password:</label>
+            <div class="password-container">
+                <input type="password" id="consumer-password" name="password" placeholder="Enter your password" required>
+                <span class="toggle-password" onclick="togglePassword('consumer-password')">👁️</span>
+            </div>
+            <div class="password-strength" id="consumer-password-strength"></div>
+
+            <label for="consumer-confirm-password">Confirm Password:</label>
+            <div class="password-container">
+                <input type="password" id="consumer-confirm-password" name="confirm-password" placeholder="Re-enter your password" required>
+                <span class="toggle-password" onclick="togglePassword('consumer-confirm-password')">👁️</span>
+            </div>
+            <div class="error" id="consumer-password-match-error">Passwords do not match</div>
+
+            <div class="terms">
+                <input type="checkbox" id="consumer-terms" name="terms" required>
+                <label for="consumer-terms" style="display: inline; font-weight: normal;">I agree to the Terms & Conditions</label>
+            </div>
+
+            <h5>Enter OTP</h5>
+            <div class="otp-container">
+                <input type="text" class="otp-input" id="consumer-otp-1" maxlength="1" onkeyup="moveToNext(this, 'consumer-otp-2')">
+                <input type="text" class="otp-input" id="consumer-otp-2" maxlength="1" onkeyup="moveToNext(this, 'consumer-otp-3')">
+                <input type="text" class="otp-input" id="consumer-otp-3" maxlength="1" onkeyup="moveToNext(this, 'consumer-otp-4')">
+                <input type="text" class="otp-input" id="consumer-otp-4" maxlength="1" onkeyup="moveToNext(this, 'consumer-otp-5')">
+                <input type="text" class="otp-input" id="consumer-otp-5" maxlength="1" onkeyup="moveToNext(this, 'consumer-otp-6')">
+                <input type="text" class="otp-input" id="consumer-otp-6" maxlength="1" onkeyup="moveToNext(this, '')">
+            </div>
+            
+            <div class="button-container">
+                <button type="button" id="consumer-send-otp">Send OTP</button>
+                <button type="button" id="consumer-verify-otp">Verify OTP</button>
+            </div>
+
+            <p>Your OTP (for demo): <span id="consumer-generated-otp"></span></p>
+            <p id="consumer-otp-status"></p>
+
+            <button type="submit" id="consumer-submit">Create Account</button>
+            
+            <p>Already have an account? <a href="login.html" style="text-decoration: none;">Login here</a></p>
+        </form>
+
+        <!-- Farmer Form -->
+        <form id="farmer-form" class="form-section">
+            <h3>Farmer Registration</h3>
+            
+            <label for="farmer-username">Username:</label>
+            <input type="text" id="farmer-username" name="username" placeholder="Enter your username" required>
+            <div class="error" id="farmer-username-error">Username must be at least 3 characters</div>
+
+            <label for="farmer-email">Email address:</label>
+            <input type="email" id="farmer-email" name="email" placeholder="Enter your email" required>
+            <div class="error" id="farmer-email-error">Please enter a valid email address</div>
+
+            <label for="farmer-aadhaar">Aadhaar number:</label>
+            <input type="text" id="farmer-aadhaar" name="aadhaar" placeholder="Enter your Aadhaar number" required pattern="[0-9]{12}">
+            <div class="error" id="farmer-aadhaar-error">Please enter a valid 12-digit Aadhaar number</div>
+
+            <label for="farmer-profile">Profile picture:</label>
+            <input type="file" id="farmer-profile" name="profile" accept="image/*">
+
+            <label for="farmer-mobile">Mobile number:</label>
+            <input type="tel" id="farmer-mobile" name="mobile" placeholder="Enter your mobile number" required pattern="[0-9]{10}">
+            <div class="error" id="farmer-mobile-error">Please enter a valid 10-digit mobile number</div>
+
+            <label for="farmer-password">Password:</label>
+            <div class="password-container">
+                <input type="password" id="farmer-password" name="password" placeholder="Enter your password" required>
+                <span class="toggle-password" onclick="togglePassword('farmer-password')">👁️</span>
+            </div>
+            <div class="password-strength" id="farmer-password-strength"></div>
+
+            <label for="farmer-confirm-password">Confirm Password:</label>
+            <div class="password-container">
+                <input type="password" id="farmer-confirm-password" name="confirm-password" placeholder="Re-enter your password" required>
+                <span class="toggle-password" onclick="togglePassword('farmer-confirm-password')">👁️</span>
+            </div>
+            <div class="error" id="farmer-password-match-error">Passwords do not match</div>
+
+            <div class="terms">
+                <input type="checkbox" id="farmer-terms" name="terms" required>
+                <label for="farmer-terms" style="display: inline; font-weight: normal;">I agree to the Terms & Conditions</label>
+            </div>
+
+            <h5>Enter OTP</h5>
+            <div class="otp-container">
+                <input type="text" class="otp-input" id="farmer-otp-1" maxlength="1" onkeyup="moveToNext(this, 'farmer-otp-2')">
+                <input type="text" class="otp-input" id="farmer-otp-2" maxlength="1" onkeyup="moveToNext(this, 'farmer-otp-3')">
+                <input type="text" class="otp-input" id="farmer-otp-3" maxlength="1" onkeyup="moveToNext(this, 'farmer-otp-4')">
+                <input type="text" class="otp-input" id="farmer-otp-4" maxlength="1" onkeyup="moveToNext(this, 'farmer-otp-5')">
+                <input type="text" class="otp-input" id="farmer-otp-5" maxlength="1" onkeyup="moveToNext(this, 'farmer-otp-6')">
+                <input type="text" class="otp-input" id="farmer-otp-6" maxlength="1" onkeyup="moveToNext(this, '')">
+            </div>
+            
+            <div class="button-container">
+                <button type="button" id="farmer-send-otp">Send OTP</button>
+                <button type="button" id="farmer-verify-otp">Verify OTP</button>
+            </div>
+
+            <p>Your OTP (for demo): <span id="farmer-generated-otp"></span></p>
+            <p id="farmer-otp-status"></p>
+
+            <button type="submit" id="farmer-submit">Create Account</button>
+            
+            <p>Already have an account? <a href="#" style="text-decoration: none;">Login here</a></p>
+        </form>
+    </div>
+
+    <script>
+        // Account type switching
+        document.getElementById('consumer-btn').addEventListener('click', function() {
+            switchAccountType('consumer');
+        });
+
+        document.getElementById('farmer-btn').addEventListener('click', function() {
+            switchAccountType('farmer');
+        });
+
+        function switchAccountType(type) {
+            // Update buttons
+            document.getElementById('consumer-btn').classList.toggle('active', type === 'consumer');
+            document.getElementById('farmer-btn').classList.toggle('active', type === 'farmer');
+            
+            // Update forms
+            document.getElementById('consumer-form').classList.toggle('active', type === 'consumer');
+            document.getElementById('farmer-form').classList.toggle('active', type === 'farmer');
+            
+            // Reset progress bar
+            document.getElementById('progress-bar').style.width = '0%';
+        }
+
+        // Form validation
+        function setupFormValidation(formId) {
+            const form = document.getElementById(formId);
+            const inputs = form.querySelectorAll('input[required]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                    updateProgressBar(formId);
+                });
+                
+                // Real-time password strength check
+                if (input.type === 'password' && input.id.includes('password') && !input.id.includes('confirm')) {
+                    input.addEventListener('input', function() {
+                        checkPasswordStrength(this.value, this.id.replace('password', 'password-strength'));
+                    });
+                }
+                
+                // Real-time password matching
+                if (input.id.includes('confirm-password')) {
+                    input.addEventListener('input', function() {
+                        const passwordFieldId = this.id.replace('confirm-', '');
+                        const password = document.getElementById(passwordFieldId).value;
+                        const confirmPassword = this.value;
+                        
+                        const errorElement = document.getElementById(this.id + '-error');
+                        if (password !== confirmPassword) {
+                            showError(errorElement, 'Passwords do not match');
+                        } else {
+                            hideError(errorElement);
+                        }
+                    });
+                }
+            });
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                let isValid = true;
+                inputs.forEach(input => {
+                    if (!validateField(input)) {
+                        isValid = false;
+                    }
+                });
+                
+                // Check if OTP is verified
+                const otpStatus = document.getElementById(formId.replace('form', 'otp-status'));
+                if (!otpStatus.textContent.includes('Verified')) {
+                    isValid = false;
+                    alert('Please verify your OTP before submitting');
+                }
+                
+                if (isValid) {
+                    alert('Account created successfully!');
+                    // In a real application, you would submit the form to a server here
+                }
+            });
+        }
+
+        function validateField(field) {
+            const errorElement = document.getElementById(field.id + '-error');
+            
+            // Check if field is empty
+            if (!field.value.trim()) {
+                showError(errorElement, 'This field is required');
+                return false;
+            }
+            
+            // Validate based on field type
+            switch(field.type) {
+                case 'email':
+                    if (!isValidEmail(field.value)) {
+                        showError(errorElement, 'Please enter a valid email address');
+                        return false;
+                    }
+                    break;
+                    
+                case 'tel':
+                    if (!isValidPhone(field.value)) {
+                        showError(errorElement, 'Please enter a valid phone number');
+                        return false;
+                    }
+                    break;
+                    
+                case 'text':
+                    if (field.id.includes('username') && field.value.length < 3) {
+                        showError(errorElement, 'Username must be at least 3 characters');
+                        return false;
+                    }
+                    
+                    if (field.id.includes('aadhaar') && !isValidAadhaar(field.value)) {
+                        showError(errorElement, 'Please enter a valid Aadhaar number');
+                        return false;
+                    }
+                    break;
+            }
+            
+            hideError(errorElement);
+            return true;
+        }
+
+        function showError(element, message) {
+            if (element) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+        }
+
+        function hideError(element) {
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function isValidPhone(phone) {
+            const re = /^[0-9]{10}$/;
+            return re.test(phone);
+        }
+
+        function isValidAadhaar(aadhaar) {
+            const re = /^[0-9]{12}$/;
+            return re.test(aadhaar);
+        }
+
+        function checkPasswordStrength(password, strengthElementId) {
+            const strengthElement = document.getElementById(strengthElementId);
+            if (!password) {
+                strengthElement.textContent = '';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            let strengthText = '';
+            let strengthClass = '';
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                    strengthText = 'Weak';
+                    strengthClass = 'weak';
+                    break;
+                case 2:
+                case 3:
+                    strengthText = 'Medium';
+                    strengthClass = 'medium';
+                    break;
+                case 4:
+                    strengthText = 'Strong';
+                    strengthClass = 'strong';
+                    break;
+            }
+            
+            strengthElement.textContent = `Password strength: ${strengthText}`;
+            strengthElement.className = `password-strength ${strengthClass}`;
+        }
+
+        function updateProgressBar(formId) {
+            const form = document.getElementById(formId);
+            const inputs = form.querySelectorAll('input[required]');
+            let filledCount = 0;
+            
+            inputs.forEach(input => {
+                if (input.value.trim() && 
+                   (!input.id.includes('confirm-password') || 
+                    input.value === document.getElementById(input.id.replace('confirm-', '')).value)) {
+                    filledCount++;
+                }
+            });
+            
+            const progress = (filledCount / inputs.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        // OTP functionality
+        function setupOTP(formType) {
+            let currentOTP = "";
+            const sendButton = document.getElementById(`${formType}-send-otp`);
+            const verifyButton = document.getElementById(`${formType}-verify-otp`);
+            const otpStatus = document.getElementById(`${formType}-otp-status`);
+            const generatedOTP = document.getElementById(`${formType}-generated-otp`);
+            
+            sendButton.addEventListener('click', function() {
+                // Validate mobile number first
+                const mobileField = document.getElementById(`${formType}-mobile`);
+                if (!isValidPhone(mobileField.value)) {
+                    alert('Please enter a valid mobile number first');
+                    return;
+                }
+                
+                generateOTP(formType);
+                otpStatus.textContent = "OTP sent to your mobile number";
+                otpStatus.style.color = "blue";
+            });
+            
+            verifyButton.addEventListener('click', function() {
+                const enteredOTP = getEnteredOTP(formType);
+                
+                if (enteredOTP === currentOTP && enteredOTP !== "") {
+                    otpStatus.textContent = "✅ OTP Verified Successfully!";
+                    otpStatus.style.color = "green";
+                } else {
+                    otpStatus.textContent = "❌ Invalid OTP. Try again!";
+                    otpStatus.style.color = "red";
+                }
+            });
+            
+            function generateOTP() {
+                currentOTP = "";
+                for (let i = 0; i < 6; i++) {
+                    currentOTP += Math.floor(Math.random() * 10);
+                }
+                generatedOTP.textContent = currentOTP; // Show for demo
+                
+                // In a real application, you would send this OTP to the user's mobile number
+            }
+            
+            function getEnteredOTP() {
+                let otp = "";
+                for (let i = 1; i <= 6; i++) {
+                    otp += document.getElementById(`${formType}-otp-${i}`).value;
+                }
+                return otp;
+            }
+        }
+
+        function moveToNext(current, nextFieldId) {
+            if (current.value.length === current.maxLength) {
+                if (nextFieldId) {
+                    document.getElementById(nextFieldId).focus();
+                }
+            }
+        }
+
+        function togglePassword(passwordFieldId) {
+            const passwordField = document.getElementById(passwordFieldId);
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFormValidation('consumer-form');
+            setupFormValidation('farmer-form');
+            setupOTP('consumer');
+            setupOTP('farmer');
+        });
+    </script>
+</body>
+</html>
